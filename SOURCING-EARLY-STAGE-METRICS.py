@@ -43,13 +43,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Initialize session state for page navigation
-if 'page' not in st.session_state:
-    st.session_state.page = 'Home'
 
-# Set up input widgets
-st.logo(image="Images/Iqorlogo.png", 
-        icon_image="Images/iQor-corporate.png")    
 
 # Sidebar navigation buttons
 st.sidebar.title("Pages")
