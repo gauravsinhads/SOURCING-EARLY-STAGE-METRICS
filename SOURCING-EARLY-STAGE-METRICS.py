@@ -96,7 +96,6 @@ summary_df = pd.DataFrame(summary_data)
 # Display summary table
 st.markdown("### Folder Movement Summary")
 st.dataframe(
-    summary_df.style
-        .applymap(lambda _: f'background-color: {custom_colors[2]}; color: black', subset=pd.IndexSlice[[0], ['Metric']])
+    summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
