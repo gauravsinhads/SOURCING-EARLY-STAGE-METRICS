@@ -1,95 +1,84 @@
 import streamlit as st
 import pandas as pd
 
-# 🎨 Custom colors
-custom_colors = ["#2F76B9", "#3B9790", "#F5BA2E", "#6A4C93", "#F77F00", "#B4BBBE", "#e6657b", "#026df5", "#5aede2"]
+# Load the CSV file
+df = pd.read_csv('SOURCING & EARLY STAGE METRICS.csv')
 
-# 📛 Set page title
-st.set_page_config(page_title="SOURCING & EARLY STAGE METRICS", layout="wide")
-st.title("📊 SOURCING & EARLY STAGE METRICS")
-
-# 📥 Load the CSV
-df = pd.read_csv("SOURCING & EARLY STAGE METRICS.csv")
-
-# 🕒 Convert columns to datetime
+# Convert date columns to datetime
 df['INVITATIONDT'] = pd.to_datetime(df['INVITATIONDT'], errors='coerce')
 df['ACTIVITY_CREATED_AT'] = pd.to_datetime(df['ACTIVITY_CREATED_AT'], errors='coerce')
 df['INSERTEDDATE'] = pd.to_datetime(df['INSERTEDDATE'], errors='coerce')
 
-# 🔍 Filters
-with st.expander("🔎 Apply Filters", expanded=False):
-    # Date range filter
-    min_date = df['INVITATIONDT'].min()
-    max_date = df['INVITATIONDT'].max()
-    start_date, end_date = st.date_input("Select Invitation Date Range", [min_date, max_date])
+# Set custom colors
+custom_colors = ["#2F76B9", "#3B9790", "#F5BA2E", "#6A4C93", "#F77F00", "#B4BBBE", "#e6657b", "#026df5", "#5aede2"]
 
-    # Work Location dropdown
-    work_locations = sorted(df['WORKLOCATION'].dropna().unique())
-    selected_locations = st.multiselect("Select Work Location(s)", work_locations, default=work_locations)
+# Set the title
+st.title("SOURCING & EARLY STAGE METRICS")
 
-    # Campaign Title dropdown
-    campaign_titles = sorted(df['CAMPAIGNTITLE'].dropna().unique())
-    selected_titles = st.multiselect("Select Campaign Title(s)", campaign_titles, default=campaign_titles)
+# Sidebar Filters
+st.subheader("Filters")
 
-# 🔄 Apply filters
-filtered_df = df[
+min_date = df['INVITATIONDT'].min()
+max_date = df['INVITATIONDT'].max()
+
+start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
+
+with st.expander("Select Work Location(s)"):
+    selected_locations = st.multiselect("Work Location", options=sorted(df['WORKLOCATION'].dropna().unique()), default=None)
+
+with st.expander("Select Campaign Title(s)"):
+    selected_campaigns = st.multiselect("Campaign Title", options=sorted(df['CAMPAIGNTITLE'].dropna().unique()), default=None)
+
+# Apply filters
+df_filtered = df[
     (df['INVITATIONDT'] >= pd.to_datetime(start_date)) &
-    (df['INVITATIONDT'] <= pd.to_datetime(end_date)) &
-    (df['WORKLOCATION'].isin(selected_locations)) &
-    (df['CAMPAIGNTITLE'].isin(selected_titles))
+    (df['INVITATIONDT'] <= pd.to_datetime(end_date))
 ]
 
-# 🔢 Total unique campaign invitations
-total_unique_ids = filtered_df['CAMPAIGNINVITATIONID'].nunique()
+if selected_locations:
+    df_filtered = df_filtered[df_filtered['WORKLOCATION'].isin(selected_locations)]
 
-# 📊 Metrics list
-metrics = []
+if selected_campaigns:
+    df_filtered = df_filtered[df_filtered['CAMPAIGNTITLE'].isin(selected_campaigns)]
 
-# Row 1: Application to Unresponsive Folder
-count1 = filtered_df[
-    (filtered_df['FOLDER_FROM_TITLE'].isna() | (filtered_df['FOLDER_FROM_TITLE'].str.strip() == "")) &
-    (filtered_df['FOLDER_TO_TITLE'].str.contains("Unresponsive", case=False, na=False))
-]['CAMPAIGNINVITATIONID'].nunique()
-percentage1 = round((count1 / total_unique_ids) * 100, 2) if total_unique_ids else 0
-metrics.append(['Application to Unresponsive Folder', count1, percentage1])
+# Drop rows where campaign ID is missing
+df_valid = df_filtered.dropna(subset=['CAMPAIGNINVITATIONID'])
 
-# Row 2: Unresponsive Folder to Passed MQ Folder
-count2 = filtered_df[
-    (filtered_df['FOLDER_FROM_TITLE'].str.strip().str.lower() == "unresponsive") &
-    (filtered_df['FOLDER_TO_TITLE'].str.contains("Passed MQ", case=False, na=False))
-]['CAMPAIGNINVITATIONID'].nunique()
-percentage2 = round((count2 / total_unique_ids) * 100, 2) if total_unique_ids else 0
-metrics.append(['Unresponsive Folder to Passed MQ Folder', count2, percentage2])
+# Calculate total unique campaign invitations
+total_unique_ids = df_valid['CAMPAIGNINVITATIONID'].nunique()
 
-# Row 3: Unresponsive Folder to Failed MQ Folder
-count3 = filtered_df[
-    (filtered_df['FOLDER_FROM_TITLE'].str.strip().str.lower() == "unresponsive") &
-    (filtered_df['FOLDER_TO_TITLE'].str.contains("Failed MQ", case=False, na=False))
-]['CAMPAIGNINVITATIONID'].nunique()
-percentage3 = round((count3 / total_unique_ids) * 100, 2) if total_unique_ids else 0
-metrics.append(['Unresponsive Folder to Failed MQ Folder', count3, percentage3])
+# Define function to compute metric
+def compute_metric_adjusted(title, from_title, to_title_contains, from_empty=False):
+    if from_empty:
+        condition = (
+            df_valid['FOLDER_FROM_TITLE'].isna()
+        ) & (
+            df_valid['FOLDER_TO_TITLE'].fillna('').str.lower().str.contains(to_title_contains.lower())
+        )
+    else:
+        condition = (
+            df_valid['FOLDER_FROM_TITLE'].fillna('').str.strip().str.lower() == from_title.lower()
+        ) & (
+            df_valid['FOLDER_TO_TITLE'].fillna('').str.lower().str.contains(to_title_contains.lower())
+        )
+    count = df_valid[condition]['CAMPAIGNINVITATIONID'].nunique()
+    percentage = round((count / total_unique_ids * 100), 2) if total_unique_ids else 0
+    return {'Metric': title, 'Count': count, 'Percentage(%)': percentage}
 
-# Row 4: Unresponsive Folder to Cold Leads Folder
-count4 = filtered_df[
-    (filtered_df['FOLDER_FROM_TITLE'].str.strip().str.lower() == "unresponsive") &
-    (filtered_df['FOLDER_TO_TITLE'].str.contains("Cold Leads", case=False, na=False))
-]['CAMPAIGNINVITATIONID'].nunique()
-percentage4 = round((count4 / total_unique_ids) * 100, 2) if total_unique_ids else 0
-metrics.append(['Unresponsive Folder to Cold Leads Folder', count4, percentage4])
+# Compute all rows
+metrics = [
+    compute_metric_adjusted('Application to Unresponsive Folder', '', 'Unresponsive', from_empty=True),
+    compute_metric_adjusted('Unresponsive Folder to Passed MQ Folder', 'Unresponsive', 'Passed MQ'),
+    compute_metric_adjusted('Unresponsive Folder to Failed MQ Folder', 'Unresponsive', 'Failed MQ'),
+    compute_metric_adjusted('Unresponsive Folder to Cold Leads Folder', 'Unresponsive', 'Cold Leads')
+]
 
-# 📋 Create summary DataFrame
-summary_df = pd.DataFrame(metrics, columns=['Metric', 'Count', 'Percentage(%)'])
+# Create summary DataFrame
+summary_df = pd.DataFrame(metrics)
 
-# 🎨 Highlighting
-def highlight_rows(row):
-    return ['background-color: #F5BA2E; color: black'] * len(row)
-
-styled_df = (
-    summary_df.style
-    .apply(highlight_rows, axis=1)
-    .format({'Percentage(%)': '{:.2f}'})
+# Display the results
+st.markdown("### Folder Transition Summary")
+st.dataframe(summary_df.style
+    .applymap(lambda _: f'background-color: {custom_colors[2]}; color: black', subset=pd.IndexSlice[["Application to Unresponsive Folder"], ['Metric']])
+    .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
-
-# 📊 Display summary
-st.markdown("### 📈 Folder Movement Metrics Summary")
-st.dataframe(styled_df)
