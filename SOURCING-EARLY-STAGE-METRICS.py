@@ -4,67 +4,6 @@ import plotly.express as px
 import re
 import numpy as np
 
-# Set page config
-st.set_page_config(page_title="iQor Talkpush Dashboard", layout="wide" )
-
-# Custom CSS for button styling
-st.markdown("""
-<style>
-    /* Button container styling */
-    .sidebar .sidebar-content .block-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-    }
-    
-    /* Button styling */
-    div.stButton > button {
-        width: 80%;
-        border-radius: 4px 4px 0 0;
-        border: 1px solid #e0e0e0;
-        background-color: #E53855;
-        color: white;
-        text-align: left;
-        padding: 8px 12px;
-        margin: 0;
-    }
-    
-    /* Selected button styling */
-    div.stButton > button:focus {
-        background-color: #2F76B9;
-        border-bottom: 2px solid #F5F5F5;
-        font-weight: bold;
-    }
-    
-    /* Hover effect */
-    div.stButton > button:hover {
-        background-color: #e9ecef;
-    }
-</style>
-""", unsafe_allow_html=True)
-
-
-
-# Sidebar navigation buttons
-st.sidebar.title("Pages")
-
-def set_page(page_name):
-    st.session_state.page = page_name
-
-pages = ["SOURCING & EARLY STAGE METRICS" ]
-
-for page in pages:
-    st.sidebar.button(
-        page,
-        on_click=set_page,
-        args=(page,),
-        key=page
-    )
-#PAGE HOME_____________________________________________________________________________________________    
-# Page content
-if st.session_state.page == "SOURCING & EARLY STAGE METRICS":
-    st.title("SOURCING & EARLY STAGE METRICS")
-
 
     # Load the data
     df = pd.read_csv("SOURCING & EARLY STAGE METRICS.csv", parse_dates=['INVITATIONDT'])
