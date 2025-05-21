@@ -62,10 +62,6 @@ summary_df = pd.DataFrame({
     'Count': [count_unresponsive, f"{percentage}%"]
 })
 
-# 🎨 Display the summary with styling
+# ✅ Show styled DataFrame without incorrect subset/index
 st.markdown("### 📊 Metrics Summary")
-st.dataframe(
-    summary_df.style
-    .applymap(lambda _: f'background-color: {custom_colors[2]}; color: black', subset=pd.IndexSlice[["Application to Unresponsive Folder"], ['Metric']])
-    .applymap(lambda _: f'color: black', subset=pd.IndexSlice[:, ['Count']])
-)
+st.dataframe(summary_df)
