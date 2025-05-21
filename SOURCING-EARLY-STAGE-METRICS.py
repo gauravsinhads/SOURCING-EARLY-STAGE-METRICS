@@ -1,16 +1,16 @@
-import streamlit as st
+import streamlit as st 
 import pandas as pd
 
 # Set page title
 st.set_page_config(page_title="SOURCING & EARLY STAGE METRICS")
 
 # Load the data
-df = pd.read_csv("SOURCING & EARLY STAGE METRICS.csv")
+sg = pd.read_csv("SOURCING & EARLY STAGE METRICS.csv")
 
 # Convert date columns to datetime
-df['INVITATIONDT'] = pd.to_datetime(df['INVITATIONDT'], errors='coerce')
-df['ACTIVITY_CREATED_AT'] = pd.to_datetime(df['ACTIVITY_CREATED_AT'], errors='coerce')
-df['INSERTEDDATE'] = pd.to_datetime(df['INSERTEDDATE'], errors='coerce')
+sg['INVITATIONDT'] = pd.to_datetime(sg['INVITATIONDT'], errors='coerce')
+sg['ACTIVITY_CREATED_AT'] = pd.to_datetime(sg['ACTIVITY_CREATED_AT'], errors='coerce')
+sg['INSERTEDDATE'] = pd.to_datetime(sg['INSERTEDDATE'], errors='coerce')
 
 # Custom colors for styling
 custom_colors = ["#2F76B9", "#3B9790", "#F5BA2E", "#6A4C93", "#F77F00", "#B4BBBE", "#e6657b", "#026df5", "#5aede2"]
@@ -21,46 +21,46 @@ st.title("SOURCING & EARLY STAGE METRICS")
 # Filters
 st.subheader("Filters")
 
-min_date = df['INVITATIONDT'].min()
-max_date = df['INVITATIONDT'].max()
+min_date = sg['INVITATIONDT'].min()
+max_date = sg['INVITATIONDT'].max()
 
 start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
 
 with st.expander("Select Work Location(s)"):
     selected_worklocations = st.multiselect(
         "Work Location",
-        options=sorted(df['WORKLOCATION'].dropna().unique()),
+        options=sorted(sg['WORKLOCATION'].dropna().unique()),
         default=None
     )
 
 with st.expander("Select Campaign Title(s)"):
     selected_campaigns = st.multiselect(
         "Campaign Title",
-        options=sorted(df['CAMPAIGNTITLE'].dropna().unique()),
+        options=sorted(sg['CAMPAIGNTITLE'].dropna().unique()),
         default=None
     )
 
 # Filter data based on selections
-df_filtered = df[
-    (df['INVITATIONDT'] >= pd.to_datetime(start_date)) &
-    (df['INVITATIONDT'] <= pd.to_datetime(end_date))
+sg_filtered = sg[
+    (sg['INVITATIONDT'] >= pd.to_datetime(start_date)) &
+    (sg['INVITATIONDT'] <= pd.to_datetime(end_date))
 ]
 
 if selected_worklocations:
-    df_filtered = df_filtered[df_filtered['WORKLOCATION'].isin(selected_worklocations)]
+    sg_filtered = sg_filtered[sg_filtered['WORKLOCATION'].isin(selected_worklocations)]
 
 if selected_campaigns:
-    df_filtered = df_filtered[df_filtered['CAMPAIGNTITLE'].isin(selected_campaigns)]
+    sg_filtered = sg_filtered[sg_filtered['CAMPAIGNTITLE'].isin(selected_campaigns)]
 
 # Drop rows without campaign ID
-df_filtered = df_filtered.dropna(subset=['CAMPAIGNINVITATIONID'])
+sg_filtered = sg_filtered.dropna(subset=['CAMPAIGNINVITATIONID'])
 
 # Get total unique campaign invitation IDs for percentage calculation
-total_unique_ids = df_filtered['CAMPAIGNINVITATIONID'].nunique()
+total_unique_ids = sg_filtered['CAMPAIGNINVITATIONID'].nunique()
 
 # Function to calculate metrics
 def compute_metric(title, from_condition, to_condition):
-    filtered = df_filtered.copy()
+    filtered = sg_filtered.copy()
 
     if from_condition == 'empty':
         mask = filtered['FOLDER_FROM_TITLE'].isna()
