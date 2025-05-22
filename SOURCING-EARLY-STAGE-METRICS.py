@@ -21,6 +21,11 @@ st.title("SOURCING & EARLY STAGE METRICS")
 # Filters
 st.subheader("Filters")
 
+# Ensure valid dates before showing date filter
+if sg['INVITATIONDT'].dropna().empty:
+    st.error("No valid INVITATIONDT values available in the data.")
+    st.stop()
+
 min_date = sg['INVITATIONDT'].min()
 max_date = sg['INVITATIONDT'].max()
 
@@ -58,19 +63,19 @@ sg_filtered = sg_filtered.dropna(subset=['CAMPAIGNINVITATIONID'])
 # Get total unique campaign invitation IDs for percentage calculation
 total_unique_ids = sg_filtered['CAMPAIGNINVITATIONID'].nunique()
 
-# Function to calculate metrics
+# Function to calculate metrics with exact match (case-insensitive)
 def compute_metric(title, from_condition, to_condition):
     filtered = sg_filtered.copy()
 
     if from_condition == 'empty':
         mask = filtered['FOLDER_FROM_TITLE'].isna()
     else:
-        mask = filtered['FOLDER_FROM_TITLE'].fillna('').str.strip().str.lower() == from_condition.lower()
+        mask = filtered['FOLDER_FROM_TITLE'].fillna('').str.strip().str.lower() == from_condition.strip().lower()
 
-    mask &= filtered['FOLDER_TO_TITLE'].fillna('').str.lower().str.contains(to_condition.lower())
+    mask &= filtered['FOLDER_TO_TITLE'].fillna('').str.strip().str.lower() == to_condition.strip().lower()
 
     count = filtered[mask]['CAMPAIGNINVITATIONID'].nunique()
-    percentage = round((count / total_unique_ids * 100), 2) if total_unique_ids else 0
+    percentage = f"{(count / total_unique_ids * 100):.2f}" if total_unique_ids else "0.00"
 
     return {"Metric": title, "Count": count, "Percentage(%)": percentage}
 
