@@ -76,15 +76,15 @@ def compute_metric(title, from_condition, to_condition):
 
 # Calculate all required metrics
 summary_data = [
-    compute_metric("Application to Unresponsive Folder", 'empty', 'Unresponsive'),
+    compute_metric("Application to Unresponsive Folder", 'Inbox', 'Unresponsive'),
     compute_metric("Unresponsive Folder to Passed MQ Folder", 'Unresponsive', 'Passed MQ'),
     compute_metric("Unresponsive Folder to Failed MQ Folder", 'Unresponsive', 'Failed MQ'),
     compute_metric("Unresponsive Folder to Cold Leads Folder", 'Unresponsive', 'Cold Leads'),
-    compute_metric("Application to Unresponsive TS Folder", 'empty', 'Unresponsive Talkscore'),
+    compute_metric("Application to Unresponsive TS Folder", 'Inbox', 'Unresponsive Talkscore'),
     compute_metric("Unresponsive TS Folder to Passed MQ Folder", 'Unresponsive Talkscore', 'Passed MQ'),
     compute_metric("Unresponsive TS Folder to Failed MQ Folder", 'Unresponsive Talkscore', 'Failed MQ'),
     compute_metric("Unresponsive TS Folder to Cold Leads TS Folder", 'Unresponsive Talkscore', 'Cold Leads Talkscore'),
-    compute_metric("Application to Unresponsive TS Retake Folder", 'empty', 'Unresponsive Talkscore Retake'),
+    compute_metric("Application to Unresponsive TS Retake Folder", 'Inbox', 'Unresponsive Talkscore Retake'),
     compute_metric("Unresponsive TS Retake Folder to Passed MQ Folder", 'Unresponsive Talkscore Retake', 'Passed MQ'),
     compute_metric("Unresponsive TS Retake Folder to Failed MQ Folder", 'Unresponsive Talkscore Retake', 'Failed MQ'),
     compute_metric("Unresponsive TS Retake Folder to Cold Lead TS Retake Folder", 'Unresponsive Talkscore Retake', 'Cold Leads Talkscore Retake')    
