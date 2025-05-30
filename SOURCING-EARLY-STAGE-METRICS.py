@@ -31,19 +31,38 @@ max_date = sg['INVITATIONDT'].max()
 
 start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
 
-with st.expander("Select Work Location(s)"):
+# Work Location Options
+worklocation_options = (
+    sg['WORKLOCATION']
+    .fillna('Missing/Blank')
+    .replace(r'^\s*$', 'Missing/Blank', regex=True)
+    .unique()
+)
+worklocation_options = sorted(worklocation_options)
+
+with st.expander("Select Work Location(s)"): 
     selected_worklocations = st.multiselect(
         "Work Location",
-        options=sorted(sg['WORKLOCATION'].dropna().unique()),
+        options=worklocation_options,
         default=None
     )
+
+# Campaign Title Options
+campaign_options = (
+    sg['CAMPAIGNTITLE']
+    .fillna('Missing/Blank')
+    .replace(r'^\s*$', 'Missing/Blank', regex=True)
+    .unique()
+)
+campaign_options = sorted(campaign_options)
 
 with st.expander("Select Campaign Title(s)"):
     selected_campaigns = st.multiselect(
         "Campaign Title",
-        options=sorted(sg['CAMPAIGNTITLE'].dropna().unique()),
+        options=campaign_options,
         default=None
     )
+
 
 # Filter data based on selections
 sg_filtered = sg[
