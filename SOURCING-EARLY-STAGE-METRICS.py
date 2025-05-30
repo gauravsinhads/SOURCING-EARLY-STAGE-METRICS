@@ -34,14 +34,14 @@ start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
 with st.expander("Select Work Location(s)"):
     selected_worklocations = st.multiselect(
         "Work Location",
-        options=sorted(sg['WORKLOCATION'].unique()),
+        options=sorted(sg['WORKLOCATION'].dropna().unique()),
         default=None
     )
 
 with st.expander("Select Campaign Title(s)"):
     selected_campaigns = st.multiselect(
         "Campaign Title",
-        options=sorted(sg['CAMPAIGNTITLE'].unique()),
+        options=sorted(sg['CAMPAIGNTITLE'].dropna().unique()),
         default=None
     )
 
