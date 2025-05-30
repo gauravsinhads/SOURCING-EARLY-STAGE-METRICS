@@ -31,7 +31,7 @@ max_date = sg['INVITATIONDT'].max()
 
 start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
 
-st.expander("Select Work Location(s)"): 
+with st.expander("Select Work Location(s)"):
     selected_worklocations = st.multiselect(
         "Work Location",
         options=sorted(sg['WORKLOCATION'].dropna().unique()),
