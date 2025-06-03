@@ -29,7 +29,12 @@ if sg['INVITATIONDT'].dropna().empty:
 min_date = sg['INVITATIONDT'].min()
 max_date = sg['INVITATIONDT'].max()
 
-start_date, end_date = st.date_input("Select Date Range", [min_date, max_date])
+default_start_date = max_date - pd.Timedelta(days=60)
+
+start_date, end_date = st.date_input(
+    "Select Date Range",
+    [default_start_date, max_date]
+)
 
 with st.expander("Select Work Location(s)"):
     selected_worklocations = st.multiselect(
