@@ -21,12 +21,12 @@ st.title("SOURCING & EARLY STAGE METRICS")
 st.subheader("Filters")
 
 # Ensure valid dates before showing date filter
-if sg['INVITATIONDT'].dropna().empty:
+if sg['ACTIVITY_CREATED_AT'].dropna().empty:
     st.error("No valid INVITATIONDT values available in the data.")
     st.stop()
 
-min_date = sg['INVITATIONDT'].min()
-max_date = sg['INVITATIONDT'].max()
+min_date = sg['ACTIVITY_CREATED_AT'].min()
+max_date = sg['ACTIVITY_CREATED_AT'].max()
 
 default_start_date = max_date - pd.Timedelta(days=60)
 
@@ -108,6 +108,7 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
 
 
 
