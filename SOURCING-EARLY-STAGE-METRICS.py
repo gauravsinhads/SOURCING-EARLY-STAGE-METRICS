@@ -56,7 +56,7 @@ sg_filtered = sg[
 ]
 
 if selected_worklocations:
-    sg_filtered = sg_filtered[sg_filtered['WORKLOCATION'].isin(selected_worklocations)]
+    sg_filtered = sg_filtered[sg_filtered['CAMPAIGN_SITE'].isin(selected_worklocations)]
 
 if selected_campaigns:
     sg_filtered = sg_filtered[sg_filtered['CAMPAIGNTITLE'].isin(selected_campaigns)]
@@ -108,5 +108,6 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
 
 
