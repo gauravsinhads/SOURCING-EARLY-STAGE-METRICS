@@ -28,7 +28,7 @@ if sg['ACTIVITY_CREATED_AT'].dropna().empty:
 min_date = sg['ACTIVITY_CREATED_AT'].min()
 max_date = sg['ACTIVITY_CREATED_AT'].max()
 
-default_start_date = max_date - pd.Timedelta(days=60)
+default_start_date = max_date - pd.Timedelta(days=30)
 
 start_date, end_date = st.date_input(
     "Select Date Range",
@@ -108,6 +108,7 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
 
 
 
