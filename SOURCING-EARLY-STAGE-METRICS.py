@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(page_title="SOURCING & EARLY STAGE METRICS")
 
 # Load the data
-sg = pd.read_csv("SOURCING & EARLY STAGE METRICS.csv")
+sg = pd.read_csv("Sourcingi_BAG_.csv")
 
 # Convert date columns to datetime
 sg['INVITATIONDT'] = pd.to_datetime(sg['INVITATIONDT'], errors='coerce')
@@ -39,7 +39,7 @@ start_date, end_date = st.date_input(
 with st.expander("Select Work Location(s)"):
     selected_worklocations = st.multiselect(
         "Work Location",
-        options=sorted(sg['WORKLOCATION'].dropna().unique()),
+        options=sorted(sg['CAMPAIGN_SITE'].dropna().unique()),
         default=None
     )
 
@@ -109,3 +109,4 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
