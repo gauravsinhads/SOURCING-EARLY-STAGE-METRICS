@@ -10,7 +10,6 @@ sg = pd.read_csv("Sourcingi_BAG_.csv")
 # Convert date columns to datetime
 sg['INVITATIONDT'] = pd.to_datetime(sg['INVITATIONDT'], errors='coerce')
 sg['ACTIVITY_CREATED_AT'] = pd.to_datetime(sg['ACTIVITY_CREATED_AT'], errors='coerce')
-sg['INSERTEDDATE'] = pd.to_datetime(sg['INSERTEDDATE'], errors='coerce')
 
 # Custom colors for styling
 custom_colors = ["#2F76B9", "#3B9790", "#F5BA2E", "#6A4C93", "#F77F00", "#B4BBBE", "#e6657b", "#026df5", "#5aede2"]
@@ -109,4 +108,5 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
 
