@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(page_title="SOURCING & EARLY STAGE METRICS")
 
 # Load the data
-sg = pd.read_csv("Sourcing_act_jun25.csv")
+sg = pd.read_csv("Sourcing_act_aug25.csv")
 
 # Convert date columns to datetime
 sg['INVITATIONDT'] = pd.to_datetime(sg['INVITATIONDT'], errors='coerce')
@@ -108,6 +108,7 @@ st.dataframe(
     summary_df.style        
         .applymap(lambda _: 'color: black', subset=pd.IndexSlice[:, ['Count', 'Percentage(%)']])
 )
+
 
 
 
